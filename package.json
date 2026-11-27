@@ -1,0 +1,12 @@
+{
+  "name": "sigce-about-us",
+  "version": "1.0.0",
+  "description": "Rebuilt About Us page for SIGCE using Node.js and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
