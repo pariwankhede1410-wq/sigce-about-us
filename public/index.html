@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | SIGCE</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="hero-brand">
+        <img
+          src="https://sigce.edu.in/wp-content/uploads/2023/12/logo-170x172-1.png"
+          alt="SIGCE College Logo"
+          class="college-logo"
+        />
+        <div class="hero-text">
+          <span class="pill" id="institute-badge">Loading...</span>
+          <h1 id="institute-name">Smt. Indira Gandhi College of Engineering</h1>
+          <p class="subtitle" id="institute-affiliation"></p>
+          <p class="tagline" id="institute-tagline"></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Quick Stats -->
+    <section class="stats-grid" id="stats-grid"></section>
+
+    <!-- Vision & Mission Tabs -->
+    <section class="card section-block">
+      <div class="tab-header">
+        <button class="tab-btn active" data-tab="vision">Vision</button>
+        <button class="tab-btn" data-tab="mission">Mission</button>
+      </div>
+      <div id="vision" class="tab-panel active">
+        <p class="lead-text" id="vision-text"></p>
+      </div>
+      <div id="mission" class="tab-panel">
+        <ul class="clean-list" id="mission-list"></ul>
+      </div>
+    </section>
+
+    <!-- Unique Selling Propositions -->
+    <section class="section-block">
+      <h2 class="section-title">Unique Selling Propositions</h2>
+      <div class="card-grid" id="usp-grid"></div>
+    </section>
+
+    <!-- Special Features -->
+    <section class="card section-block">
+      <h2 class="section-title">Special Features</h2>
+      <ul class="features-grid" id="features-list"></ul>
+    </section>
+
+    <!-- Legacy, Leadership & Ecosystem -->
+    <section class="section-block two-col">
+      <div class="card">
+        <h2 class="section-title">30+ Years Legacy & Leadership</h2>
+        <p id="trust-summary"></p>
+        <div id="leadership-list" class="leadership-list"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Innovation, Programs & Alumni</h2>
+        <p id="location-advantage"></p>
+        <h3>B.E. Programs Highlighted</h3>
+        <div id="programs-tags" class="tag-wrap"></div>
+        <h3>Notable Alumni Recruiters</h3>
+        <div id="alumni-tags" class="tag-wrap"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong id="footer-name"></strong>
+        <p id="footer-address"></p>
+      </div>
+      <div>
+        <p id="footer-phones"></p>
+        <p id="footer-email"></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    async function loadAboutData() {
+      const res = await fetch('/api/about');
+      const data = await res.json();
+
+      document.getElementById('institute-badge').textContent = data.institute.badge;
+      document.getElementById('institute-name').textContent = `${data.institute.name} (${data.institute.shortName})`;
+      document.getElementById('institute-affiliation').textContent = data.institute.affiliation;
+      document.getElementById('institute-tagline').textContent = data.institute.tagline;
+
+      // Stats
+      document.getElementById('stats-grid').innerHTML = data.stats
+        .map(s => `<div class="stat-card"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`)
+        .join('');
+
+      // Vision & Mission
+      document.getElementById('vision-text').textContent = data.vision;
+      document.getElementById('mission-list').innerHTML = data.mission
+        .map(item => `<li>${item}</li>`)
+        .join('');
+
+      // USPs
+      document.getElementById('usp-grid').innerHTML = data.usps
+        .map(u => `<div class="card usp-card"><h3>${u.title}</h3><p>${u.detail}</p></div>`)
+        .join('');
+
+      // Special Features
+      document.getElementById('features-list').innerHTML = data.specialFeatures
+        .map(f => `<li>${f}</li>`)
+        .join('');
+
+      // Legacy & Leadership
+      document.getElementById('trust-summary').textContent = data.legacyAndEcosystem.trustSummary;
+      document.getElementById('leadership-list').innerHTML = data.legacyAndEcosystem.leadership
+        .map(l => `<div class="leader-item"><strong>${l.name}</strong> <span>(${l.role})</span><p>${l.note}</p></div>`)
+        .join('');
+
+      document.getElementById('location-advantage').textContent = data.legacyAndEcosystem.locationAdvantage;
+      document.getElementById('programs-tags').innerHTML = data.legacyAndEcosystem.programs
+        .map(p => `<span class="tag">${p}</span>`)
+        .join('');
+      document.getElementById('alumni-tags').innerHTML = data.legacyAndEcosystem.alumniCompanies
+        .map(c => `<span class="tag accent">${c}</span>`)
+        .join('');
+
+      // Footer
+      document.getElementById('footer-name').textContent = data.institute.name;
+      document.getElementById('footer-address').textContent = data.contact.address;
+      document.getElementById('footer-phones').textContent = `Phone: ${data.contact.phones.join(' | ')}`;
+      document.getElementById('footer-email').textContent = `Email: ${data.contact.email}`;
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    loadAboutData();
+  </script>
+</body>
+</html>
